@@ -1,16 +1,1090 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft Servers</title>
+  <style>
+    .side-tab-navigation {
+      margin-top: 2rem;
+    }
+
+    .side-tab-navigation h3 {
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+
+    .side-tab-button {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      background: rgba(216, 180, 254, 0.2);
+      border: none;
+      color: #f5f3ff;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .side-tab-button:hover {
+      background: rgba(216, 180, 254, 0.4);
+    }
+
+
+
+    .ip-container {
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .ip-container.copied {
+      background-color: #00008B !important;
+      /* Dark blue */
+      box-shadow: 0 0 15px #00008B, 0 0 25px #4169E1;
+      /* Intense blue glow effect */
+    }
+
+
+    .hamburger-menu {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1100;
+      cursor: pointer;
+      width: 30px;
+      height: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hamburger-line {
+      width: 100%;
+      height: 3px;
+      background-color: #f5f3ff;
+      transition: all 0.3s ease;
+    }
+
+    .side-tab {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: rgba(88, 28, 135, 0.9);
+      z-index: 1000;
+      transition: left 0.3s ease;
+      padding: 2rem;
+      overflow-y: auto;
+      color: #f5f3ff;
+    }
+
+    .side-tab.open {
+      left: 0;
+    }
+
+    .hamburger-menu.active .hamburger-line:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger-menu.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger-menu.active .hamburger-line:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      min-height: 100vh;
+      color: #f5f3ff;
+      background: #1e1b4b;
+      overflow-x: hidden;
+    }
+
+    .background-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .background-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(30, 27, 75, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      animation: glow 2s ease-in-out infinite;
+      cursor: pointer;
+      text-color: white;
+    }
+
+    .title a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    @keyframes glow {
+
+      0%,
+      100% {
+        text-shadow: 0 0 10px rgba(216, 180, 254, 0.3);
+      }
+
+      50% {
+        text-shadow: 0 0 20px rgba(216, 180, 254, 0.6);
+      }
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .server-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .server-card {
+      background: rgba(88, 28, 135, 0.2);
+      border: 1px solid rgba(216, 180, 254, 0.2);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      cursor: pointer;
+      position: relative;
+      backdrop-filter: blur(8px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .server-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(88, 28, 135, 0.4);
+    }
+
+    .server-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .server-card p {
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+
+    .ip-container {
+      background: rgba(88, 28, 135, 0.3);
+      padding: 0.75rem;
+      border-radius: 0.25rem;
+      font-family: monospace;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.3s;
+    }
+
+    .copy-button:hover {
+      opacity: 1;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background: #1e1b4b;
+      border: 1px solid rgba(216, 180, 254, 0.2);
+      border-radius: 1rem;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .close-button:hover {
+      opacity: 1;
+    }
+
+    .image-gallery {
+      position: relative;
+      height: 300px;
+      margin-bottom: 2rem;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-dots {
+      position: absolute;
+      bottom: 1rem;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .dot.active {
+      background: white;
+    }
+
+    .server-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .info-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .info-section h3 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-list,
+    .rules-list {
+      list-style: disc;
+      margin-left: 1.5rem;
+      opacity: 0.9;
+    }
+
+    .player-count {
+      background: rgba(88, 28, 135, 0.3);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(88, 28, 135, 0.5);
+      border-radius: 4px;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #a855f7;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .title {
+        font-size: 2rem;
+      }
+
+      .server-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .server-details {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        margin: 1rem;
+        padding: 1rem;
+      }
+    }
+
+    .search-filter {
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+
+    }
+
+    .search-input {
+      flex: 1;
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: 2px solid #b469ff;
+      background: rgba(88, 28, 135, 0.2);
+      color: #f5f3ff;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(180, 105, 255, 0.3),
+        inset 0 0 10px rgba(180, 105, 255, 0.2);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #d8b4fe;
+      box-shadow: 0 0 20px rgba(180, 105, 255, 0.5),
+        inset 0 0 15px rgba(180, 105, 255, 0.3);
+    }
+
+    .search-input::placeholder {
+      color: rgba(245, 243, 255, 0.6);
+      text-shadow: 0 0 8px rgba(180, 105, 255, 0.3);
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .status-online {
+
+      0 0 15px #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    .status-offline {
+      background-color: #ef4444;
+      box-shadow: 0 0 8px #ef4444,
+        0 0 15px #ef4444;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 8px #22c55e, 0 0 15px #22c55e;
+      }
+
+      50% {
+        box-shadow: 0 0 12px #22c55e, 0 0 20px #22c55e;
+      }
+
+      100% {
+        box-shadow: 0 0 8px #22c55e, 0 0 15px #22c55e;
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 8px #22c55e, 0 0 15px #22c55e;
+      }
+
+      50% {
+        box-shadow: 0 0 12px #22c55e, 0 0 20px #22c55e;
+      }
+
+      100% {
+        box-shadow: 0 0 8px #22c55e, 0 0 15px #22c55e;
+      }
+    }
+
+    .search-box {
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto 2rem;
+    }
+
+    .search-button {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #b469ff;
+      cursor: pointer;
+    }
+
+    .status-online {
+      background-color: #22c55e;
+      box-shadow: 0 0 15px #22c55e;
+      animation: pulse 2s infinite;
+    }
+  </style>
 </head>
 
 <body>
-  Hello world
-  <script src="script.js"></script>
+
+  <div class="hamburger-menu">
+    <div class="hamburger-line"></div>
+    <div class="hamburger-line"></div>
+    <div class="hamburger-line"></div>
+  </div>
+
+
+  <div class="side-tab">
+
+
+    <div class="side-tab-navigation">
+      <h3> Home </h3>
+      <button id="online-servers-filter" class="side-tab-button">
+        Online Servers
+      </button>
+      <button id="pvp-servers-filter" class="side-tab-button">
+        PvP Servers
+      </button>
+
+      <ul>
+        <li>Total Servers: 9</li>
+        <li>Most Popular: Hypixel</li>
+        <li>Newest Addition: SM Penguin</li>
+      </ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+  <div class="background-container">
+    <img src="imagefolder/idk.jpg" alt="Minecraft background" class="background-image">
+    <div class="overlay"></div>
+  </div>
+
+  <div class="container">
+    <header class="header">
+      <h1 class="title"><a href="/">Featured Minecraft Servers</a></h1>
+      <p class="subtitle">Join these amazing servers and start your adventure!</p>
+    </header>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search servers...">
+      <button class="search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="server-grid">
+      <!-- Server cards will be inserted here by JavaScript -->
+    </div>
+
+    <footer class="footer">
+      <p class="text-center opacity-80">Click on any server card to view more information</p>
+    </footer>
+  </div>
+
+  <div class="modal" id="serverModal">
+    <div class="modal-content">
+      <button class="close-button">&times;</button>
+      <div class="modal-body">
+        <!-- Modal content will be inserted here by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    const servers = [
+
+      {
+        id: 'lifesteal',
+        name: 'SMP Lifesteal',
+        description: "A unique SMP experience where players can steal each other's hearts!",
+        ip: 'lifesteal.net',
+        longDescription: "Experience Minecraft like never before in this heart-stealing survival multiplayer server. Each player starts with a limited number of hearts, and through combat, you can steal hearts from other players to become stronger. But be careful - if you lose all your hearts, you're banned until the next reset!",
+        features: [
+          "Heart stealing mechanics",
+          "Weekly events and competitions",
+          "Player-driven economy",
+          "Custom plugins and items",
+          "Active staff and community"
+        ],
+        images: [
+          "/imagefolder/me.png",
+          "/imagefolder/life.png",
+          "/imagefolder/web.png"
+        ],
+        rules: [
+          "No cheating or hacks",
+          "Be respectful to other players",
+          "No spawn camping",
+          "No exploiting bugs"
+        ],
+
+
+      },
+
+      {
+        id: 'donut',
+        name: 'Donut SMP',
+        description: "Join a friendly survival multiplayer community where creativity and collaboration thrive!",
+        ip: 'play.donutsmp.net',
+        longDescription: "Welcome to Donut SMP, a vibrant Minecraft community where players come together to build, explore, and create lasting friendships. Our server features a vanilla-plus experience with carefully selected plugins to enhance gameplay while maintaining the core survival experience. Whether you're a builder, adventurer, or redstone engineer, there's a place for everyone in our growing community!",
+        features: [
+          "Semi-vanilla gameplay experience",
+          "Regular community events",
+          "Player-run shops and markets",
+          "Land claiming and protection",
+          "Discord integration"
+        ],
+        images: [
+          "/imagefolder/donut.webp",
+          "/imagefolder/bello.png",
+          "/imagefolder/wew.webp"
+        ],
+        rules: [
+          "No griefing or stealing",
+          "Respect all players and staff",
+          "No use of hacked clients or unfair mods",
+          "Keep chat family-friendly",
+          "No automated farming/AFK machines"
+        ]
+      },
+
+
+
+
+
+
+      {
+        id: 'hypixel',
+        name: 'Hypixel',
+        description: 'The largest and most popular Minecraft server network!',
+        ip: 'mc.hypixel.net',
+        longDescription: "Welcome to Hypixel - the world's largest and most popular Minecraft server network! With over 100,000 concurrent players, Hypixel offers an incredible variety of minigames and game modes. From intense PvP battles in Bedwars and Skywars to relaxing arcade games, there's something for everyone. The server features custom-developed games, unique progression systems, and regular updates to keep the experience fresh and exciting.",
+        features: [
+          "40+ unique minigames",
+          "Advanced ranking system",
+          "Regular tournaments and events",
+          "Custom game mechanics",
+          "Dedicated anti-cheat system",
+          "Seasonal special events",
+          "Advanced party system"
+        ],
+        images: [
+          "/imagefolder/c.jpg",
+          "/imagefolder/hj.webp",
+          "/imagefolder/b.jpg"
+        ],
+        rules: [
+          "No hacked clients or mods that give unfair advantages",
+          "No inappropriate skins or behavior",
+          "No cross-teaming in competitive games",
+          "No chat spam or harassment",
+          "No boosting or stat manipulation"
+        ],
+
+      },
+      {
+        id: 'pvplegacy',
+        name: 'PvP Legacy',
+        description: 'The ultimate PvP experience for competitive players!',
+        ip: 'play.pvplegacy.net',
+        longDescription: "PvP Legacy is dedicated to providing the highest quality PvP experience in Minecraft. Featuring both classic and modern combat systems, custom-built arenas, and sophisticated matchmaking, it's the perfect server for competitive players. Regular tournaments, leagues, and events keep the competition exciting, while our skilled staff ensures fair play.",
+        features: [
+          "Both 1.8 and 1.9+ combat systems",
+          "Competitive ranking system",
+          "Custom-built practice arenas",
+          "Advanced matchmaking system",
+          "Regular tournaments",
+          "Detailed statistics tracking",
+          "Custom kit creation"
+        ],
+        images: [
+          "/imagefolder/jip.png",
+          "/imagefolder/joo",
+          "/imagefolder/d.webp"
+        ],
+        rules: [
+          "Zero tolerance for cheating",
+          "No abuse of game mechanics",
+          "Respectful behavior in chat",
+          "No targeting specific players",
+          "Fair play in tournaments"
+        ],
+
+      },
+      {
+        id: 'penguin',
+        name: 'SM Penguin',
+        description: 'Join the penguin community for unique gameplay experiences!',
+        ip: 'sm.penguin.gg',
+        longDescription: "SM Penguin offers a fresh take on Minecraft multiplayer with unique game modes and a friendly community. Our server features custom-developed plugins that create entirely new ways to play Minecraft. From our signature Penguin Wars to collaborative building challenges, we focus on creating memorable experiences for players of all skill levels.",
+        features: [
+          "Unique Penguin Wars gamemode",
+          "Creative building competitions",
+          "Community events and parties",
+          "Custom cosmetic system",
+          "Friend and party system",
+          "Special seasonal events",
+          "Community marketplace"
+        ],
+        images: [
+          "/imagefolder/hii.webp",
+          "/imagefolder/wha.webp",
+          "/imagefolder/e.png"
+        ],
+        rules: [
+          "Be respectful to all players",
+          "No griefing or stealing",
+          "Keep chat family-friendly",
+          "No exploiting bugs",
+          "No unauthorized alt accounts"
+        ],
+
+      },
+
+
+      {
+        id: 'earthmc',
+        name: 'Earth MC',
+        description: 'Experience geopolitical gameplay on a 1:1000 scale Earth map!',
+        ip: 'mp.earthmc.net',
+        longDescription: "EarthMC recreates Earth in Minecraft, allowing players to build towns, create nations, and engage in geopolitics. Join existing nations or start your own civilization, engage in trade, diplomacy, and warfare on a massive scale.",
+        features: [
+          "Accurate Earth map recreation",
+          "Nation and town system",
+          "Player-driven economy",
+          "Custom plugins",
+          "Dynamic political landscape"
+        ],
+        images: [
+          "/imagefolder/placeholder.png",
+          "/imagefolder/placeholder.png",
+          "/imagefolder/placeholder.png"
+        ],
+        rules: [
+          "No exploiting or hacking",
+          "Respect other players and nations",
+          "No excessive griefing",
+          "Keep chat appropriate",
+          "Follow server guidelines"
+        ]
+      },
+      {
+        id: 'mineberry',
+        name: 'Mine Berry',
+        description: 'A fresh take on survival with unique custom features!',
+        ip: 'go.mineberry.org',
+        longDescription: "Mine Berry offers an enhanced survival experience with custom features that make gameplay more exciting. From unique items to special events, the server provides a fresh perspective on Minecraft multiplayer.",
+        features: [
+          "Custom items and mechanics",
+          "Weekly events",
+          "Active community",
+          "Player marketplace",
+          "Seasonal competitions"
+        ],
+        images: [
+          "/imagefolder/web.webp",
+          "/imagefolder/reuk.webp",
+          "/imagefolder/placeholder.png"
+        ],
+        rules: [
+          "No cheating or hacks",
+          "Respect all players",
+          "Keep chat family-friendly",
+          "No griefing",
+          "Follow staff instructions"
+        ]
+      },
+      {
+        id: 'luxcube',
+        name: 'Luxcube',
+        description: 'Premium Minecraft experience with high-quality gameplay!',
+        ip: 'luxcube.net',
+        longDescription: "Luxcube delivers a premium Minecraft experience with carefully curated features and gameplay elements. The server focuses on providing high-quality content while maintaining a balanced and enjoyable environment for all players.",
+        features: [
+          "Premium gameplay features",
+          "Regular updates",
+          "Custom enchantments",
+          "Special events",
+          "Active staff team"
+        ],
+        images: [
+          "/imagefolder/placeholder.png",
+          "/imagefolder/placeholder.png",
+          "/imagefolder/placeholder.png"
+        ],
+        rules: [
+          "No hacking or cheating",
+          "Respect others",
+          "No spam or advertising",
+          "Keep chat appropriate",
+          "No exploiting bugs"
+        ]
+      },
+
+
+      {
+        id: 'mccomplex',
+        name: 'MC Complex',
+        description: 'A diverse server network with something for everyone!',
+        ip: 'smc.mc-complex.com',
+        longDescription: "MC Complex is a comprehensive Minecraft network offering a wide range of gameplay experiences. Whether you're interested in survival, creative building, economy, or competitive gaming, we have servers tailored to your interests. Our network features multiple specialized servers, each with its own unique features and community, all connected through our global network.",
+        features: [
+          "Multiple specialized servers",
+          "Advanced economy system",
+          "Creative plotworld",
+          "Survival with land claims",
+          "Custom enchantments",
+          "Monthly events",
+          "Cross-server chat"
+        ],
+        images: [
+          "/imagefolder/f.webp",
+          "/imagefolder/unnamed.jpg",
+          "/imagefolder/g.webp"
+        ],
+        rules: [
+          "No griefing or stealing",
+          "Respect all players",
+          "No advertising",
+          "Keep chat appropriate",
+          "No using exploits or hacks"
+        ],
+
+      }
+    ];
+
+    function createServerCards() {
+      const grid = document.querySelector('.server-grid');
+      grid.innerHTML = ''; // Clear existing cards
+
+      servers.forEach(server => server.status = server.status || 'offline');
+
+      servers.forEach(server => {
+        const card = document.createElement('div');
+        card.className = 'server-card';
+        card.dataset.serverId = server.id;
+        card.innerHTML = `
+          <h2>
+            <span class="status-indicator ${server.status === 'online' ? 'status-online' : 'status-offline'}"></span>
+            ${server.name}
+          </h2>
+          <p>${server.description}</p>
+          <div class="ip-container" data-ip="${server.ip}">
+            <span class="ip-text">${server.ip}</span>
+            <span class="copy-message">   Copy   </span>
+          </div>
+          <div class="player-count">
+            Players: ${server.currentPlayers || 0}/${server.maxPlayers || 0}
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${((server.currentPlayers || 0) / (server.maxPlayers || 100) * 100)}%"></div>
+            </div>
+          </div>
+        `;
+
+
+        // Add click event listener for the IP container
+        const ipContainer = card.querySelector('.ip-container');
+        ipContainer.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const ip = e.currentTarget.dataset.ip;
+          const copyMessage = e.currentTarget.querySelector('.copy-message');
+
+          try {
+            await navigator.clipboard.writeText(ip);
+
+            // Visual feedback with green background
+            copyMessage.classList.add('show');
+            ipContainer.classList.add('copied');
+
+            // Reset after 2 seconds
+            setTimeout(() => {
+              copyMessage.classList.remove('show');
+              ipContainer.classList.remove('copied');
+            }, 2000);
+
+            // Add a subtle shake animation
+            ipContainer.style.animation = 'none';
+            ipContainer.offsetHeight; // Trigger reflow
+            ipContainer.style.animation = 'shake 0.5s ease';
+          } catch (err) {
+            console.error('Failed to copy:', err);
+            copyMessage.textContent = 'Failed to copy';
+            copyMessage.style.color = '#ef4444';
+            copyMessage.classList.add('show');
+            setTimeout(() => {
+              copyMessage.classList.remove('show');
+              copyMessage.textContent = 'Copied!';
+              copyMessage.style.color = '';
+            }, 2000);
+          }
+        });
+
+        // Add click event for the card (modal opening)
+        card.addEventListener('click', () => openModal(server));
+        grid.appendChild(card);
+      });
+    }
+
+    // Function to open modal with server details
+    function openModal(server) {
+      const modal = document.getElementById('serverModal');
+      const modalBody = modal.querySelector('.modal-body');
+
+      modalBody.innerHTML = `
+        <div class="image-gallery">
+          <img src="${server.images[0]}" alt="${server.name}" class="gallery-image">
+          <div class="image-dots">
+            ${server.images.map((_, i) => `
+              <div class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="server-details">
+          <div class="info-section">
+            <h3>About</h3>
+            <p>${server.longDescription}</p>
+          </div>
+          <div class="info-section">
+            <h3>Features</h3>
+            <ul class="feature-list">
+              ${server.features.map(feature => `<li>${feature}</li>`).join('')}
+            </ul>
+            <h3>Rules</h3>
+            <ul class="rules-list">
+              ${server.rules.map(rule => `<li>${rule}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+
+      // Set up image gallery navigation
+      const dots = modalBody.querySelectorAll('.dot');
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          const index = parseInt(dot.dataset.index);
+          const galleryImage = modalBody.querySelector('.gallery-image');
+          galleryImage.src = server.images[index];
+          dots.forEach(d => d.classList.remove('active'));
+          dot.classList.add('active');
+        });
+      });
+
+      modal.style.display = 'block';
+    }
+
+    // Function to filter servers based on search input
+    function filterServers() {
+      const searchInput = document.getElementById('searchInput');
+      const filter = searchInput.value.toLowerCase();
+      const serverCards = document.querySelectorAll('.server-card');
+
+      serverCards.forEach(card => {
+        const name = card.querySelector('h2').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+        if (name.includes(filter) || description.includes(filter)) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    // Function to update server status
+    async function updateServerStatus() {
+      for (let server of servers) {
+        try {
+          const encodedIP = encodeURIComponent(server.ip);
+          const response = await fetch(`https://api.mcsrvstat.us/2/${encodedIP}`);
+          const data = await response.json();
+
+          server.status = data.online ? 'online' : 'offline';
+          server.status = (data.online && data.players?.online > 0) ? 'online' : 'offline';
+          server.currentPlayers = data.players?.online || 0;
+          server.maxPlayers = (!data.players?.max || data.players.max <= data.players.online) ? 10000 : data.players.max;
+
+          const card = document.querySelector(`[data-server-id="${server.id}"]`);
+          if (card) {
+            const statusIndicator = card.querySelector('.status-indicator');
+            const playerCount = card.querySelector('.player-count');
+            if (statusIndicator) {
+              statusIndicator.className = `status-indicator ${server.status === 'online' ? 'status-online' : 'status-offline'}`;
+            }
+            if (playerCount) {
+              playerCount.innerHTML = `
+                Players: ${server.currentPlayers}/${server.maxPlayers}
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${(server.currentPlayers / server.maxPlayers * 100)}%"></div>
+                </div>
+              `;
+            }
+          }
+        } catch (err) {
+          console.error(`Failed to fetch status for ${server.ip}:`, err);
+          server.status = 'offline';
+          server.currentPlayers = 0;
+          server.maxPlayers = 0;
+        }
+      }
+    }
+
+    // Event listeners for modal
+    document.querySelector('.close-button').addEventListener('click', () => {
+      document.getElementById('serverModal').style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      const modal = document.getElementById('serverModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Search input event listener
+    document.getElementById('searchInput').addEventListener('input', filterServers);
+
+    // Initialize everything
+    createServerCards();
+    updateServerStatus();
+    setInterval(updateServerStatus, 300000);
+
+
+
+
+
+    // Add hamburger menu functionality
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const sideTab = document.querySelector('.side-tab');
+
+    hamburgerMenu.addEventListener('click', () => {
+      hamburgerMenu.classList.toggle('active');
+      sideTab.classList.toggle('open');
+    });
+
+    // Close side tab when clicking outside
+    document.addEventListener('click', (event) => {
+      if (!hamburgerMenu.contains(event.target) &&
+        !sideTab.contains(event.target)) {
+        hamburgerMenu.classList.remove('active');
+        sideTab.classList.remove('open');
+      }
+    });
+
+
+
+    // Home button scroll to top
+    const homeButton = document.querySelector('.side-tab-navigation h3');
+    homeButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      // Also close the side tab
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+
+    // Online Servers Filter
+    document.getElementById('online-servers-filter').addEventListener('click', () => {
+      const serverCards = document.querySelectorAll('.server-card');
+      serverCards.forEach(card => {
+        const statusIndicator = card.querySelector('.status-indicator');
+        card.style.display = statusIndicator.classList.contains('status-online') ? '' : 'none';
+      });
+      // Close side tab
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+
+    // PvP Servers Filter
+    document.getElementById('pvp-servers-filter').addEventListener('click', () => {
+      const pvpServers = ['pvplegacy', 'hypixel'];
+      const serverCards = document.querySelectorAll('.server-card');
+      serverCards.forEach(card => {
+        const serverId = card.dataset.serverId.toLowerCase();
+        card.style.display = pvpServers.includes(serverId) ? '' : 'none';
+      });
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+    // Update status every 5 minutes
+  </script>
+
+
 </body>
+
 
 </html>

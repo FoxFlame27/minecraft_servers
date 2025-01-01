@@ -1,4 +1,70 @@
-html {
-  height: 100%;
-  width: 100%;
+.search-filter {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 2rem;
+  background: #13001a;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 2px solid #b469ff;
+  background: rgba(88, 28, 135, 0.2);
+  color: #f5f3ff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(180, 105, 255, 0.3),
+    inset 0 0 10px rgba(180, 105, 255, 0.2);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #d8b4fe;
+  box-shadow: 0 0 20px rgba(180, 105, 255, 0.5),
+    inset 0 0 15px rgba(180, 105, 255, 0.3);
+}
+
+.search-input::placeholder {
+  color: rgba(245, 243, 255, 0.6);
+  text-shadow: 0 0 8px rgba(180, 105, 255, 0.3);
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.status-online {
+  background-color: #22c55e;
+  box-shadow: 0 0 8px #22c55e,
+    0 0 15px #22c55e;
+  animation: pulse 2s infinite;
+}
+
+.status-offline {
+  background-color: #ef4444;
+  box-shadow: 0 0 8px #ef4444,
+    0 0 15px #ef4444;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 8px #22c55e, 0 0 15px #22c55e;
+  }
+
+  50% {
+    box-shadow: 0 0 12px #22c55e, 0 0 20px #22c55e;
+  }
+
+  100% {
+    box-shadow: 0 0 8px #22c55e, 0 0 15px #22c55e;
+  }
 }
