@@ -6,6 +6,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Minecraft Servers</title>
   <style>
+
+
+    .server-card .like-button {
+      position: absolute;
+      top: 1rem;
+      right: 3rem;
+      background: none;
+      border: none;
+      color: #f5f3ff;
+      cursor: pointer;
+      font-size: 1.2rem;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+    }
+
+    .server-card .like-button:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .server-card .like-button.liked {
+      color: #ff69b4;
+      opacity: 1;
+    }
+
+    #liked-servers-filter #like-icon {
+      color: #ff69b4;
+    }
+
+    #liked-count {
+      font-size: 0.9rem;
+      margin-left: 0.5rem;
+    }
+
+    
     .side-tab-navigation {
       margin-top: 2rem;
     }
@@ -424,11 +459,10 @@
     }
 
     .status-online {
-
-      0 0 15px #22c55e;
+      background-color: #22c55e;
+      box-shadow: 0 0 15px #22c55e;
       animation: pulse 2s infinite;
     }
-
     .status-offline {
       background-color: #ef4444;
       box-shadow: 0 0 8px #ef4444,
@@ -509,6 +543,14 @@
         PvP Servers
       </button>
 
+
+
+        <button id="liked-servers-filter" class="side-tab-button">
+          <span id="like-icon">❤️</span> Liked Servers
+          <span id="liked-count">(0)</span>
+        </button>
+    </div>
+
       <ul>
         <li>Total Servers: 9</li>
         <li>Most Popular: Hypixel</li>
@@ -520,11 +562,8 @@
 
 
 
-
-
-
   <div class="background-container">
-    <img src="imagefolder/idk.jpg" alt="Minecraft background" class="background-image">
+    <img src="/imagefolder/idk.jpg" alt="Minecraft background" class="background-image">
     <div class="overlay"></div>
   </div>
 
@@ -565,8 +604,10 @@
 
   <script>
 
-    const servers = [
+    let likedServers = JSON.parse(localStorage.getItem('likedServers') || '[]');
 
+    const servers = [
+      
       {
         id: 'lifesteal',
         name: 'SMP Lifesteal',
@@ -827,25 +868,52 @@
       }
     ];
 
+    function toggleLike(serverId) {
+      const index = likedServers.indexOf(serverId);
+      if (index === -1) {
+        likedServers.push(serverId);
+      } else {
+        likedServers.splice(index, 1);
+      }
+      localStorage.setItem('likedServers', JSON.stringify(likedServers));
+
+      const likeButton = document.querySelector(`button[data-server-id="${serverId}"]`);
+      const isLiked = likedServers.includes(serverId);
+      likeButton.textContent = isLiked ? '❤️' : '🤍';
+      likeButton.classList.toggle('liked', isLiked);
+
+      updateLikedCount();
+    }
+
+    function updateLikedCount() {
+      const countElement = document.getElementById('liked-count');
+      countElement.textContent = `(${likedServers.length})`;
+    }
+
     function createServerCards() {
       const grid = document.querySelector('.server-grid');
-      grid.innerHTML = ''; // Clear existing cards
-
-      servers.forEach(server => server.status = server.status || 'offline');
+      grid.innerHTML = '';
 
       servers.forEach(server => {
         const card = document.createElement('div');
         card.className = 'server-card';
         card.dataset.serverId = server.id;
+        server.status = server.status || 'offline';
+
+        const isLiked = likedServers.includes(server.id);
+
         card.innerHTML = `
           <h2>
             <span class="status-indicator ${server.status === 'online' ? 'status-online' : 'status-offline'}"></span>
             ${server.name}
           </h2>
+          <button class="like-button ${isLiked ? 'liked' : ''}" data-server-id="${server.id}">
+            ${isLiked ? '❤️' : '🤍'}
+          </button>
           <p>${server.description}</p>
           <div class="ip-container" data-ip="${server.ip}">
             <span class="ip-text">${server.ip}</span>
-            <span class="copy-message">   Copy   </span>
+            <span class="copy-message">Copy</span>
           </div>
           <div class="player-count">
             Players: ${server.currentPlayers || 0}/${server.maxPlayers || 0}
@@ -855,51 +923,37 @@
           </div>
         `;
 
+        const likeButton = card.querySelector('.like-button');
+        likeButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleLike(server.id);
+        });
 
-        // Add click event listener for the IP container
         const ipContainer = card.querySelector('.ip-container');
         ipContainer.addEventListener('click', async (e) => {
           e.stopPropagation();
           const ip = e.currentTarget.dataset.ip;
           const copyMessage = e.currentTarget.querySelector('.copy-message');
-
           try {
             await navigator.clipboard.writeText(ip);
-
-            // Visual feedback with green background
             copyMessage.classList.add('show');
             ipContainer.classList.add('copied');
-
-            // Reset after 2 seconds
             setTimeout(() => {
               copyMessage.classList.remove('show');
               ipContainer.classList.remove('copied');
             }, 2000);
-
-            // Add a subtle shake animation
-            ipContainer.style.animation = 'none';
-            ipContainer.offsetHeight; // Trigger reflow
-            ipContainer.style.animation = 'shake 0.5s ease';
           } catch (err) {
             console.error('Failed to copy:', err);
-            copyMessage.textContent = 'Failed to copy';
-            copyMessage.style.color = '#ef4444';
-            copyMessage.classList.add('show');
-            setTimeout(() => {
-              copyMessage.classList.remove('show');
-              copyMessage.textContent = 'Copied!';
-              copyMessage.style.color = '';
-            }, 2000);
           }
         });
 
-        // Add click event for the card (modal opening)
         card.addEventListener('click', () => openModal(server));
         grid.appendChild(card);
       });
+
+      updateLikedCount();
     }
 
-    // Function to open modal with server details
     function openModal(server) {
       const modal = document.getElementById('serverModal');
       const modalBody = modal.querySelector('.modal-body');
@@ -931,7 +985,6 @@
         </div>
       `;
 
-      // Set up image gallery navigation
       const dots = modalBody.querySelectorAll('.dot');
       dots.forEach(dot => {
         dot.addEventListener('click', () => {
@@ -946,7 +999,6 @@
       modal.style.display = 'block';
     }
 
-    // Function to filter servers based on search input
     function filterServers() {
       const searchInput = document.getElementById('searchInput');
       const filter = searchInput.value.toLowerCase();
@@ -963,7 +1015,6 @@
       });
     }
 
-    // Function to update server status
     async function updateServerStatus() {
       for (let server of servers) {
         try {
@@ -1001,7 +1052,10 @@
       }
     }
 
-    // Event listeners for modal
+    // Event Listeners
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const sideTab = document.querySelector('.side-tab');
+
     document.querySelector('.close-button').addEventListener('click', () => {
       document.getElementById('serverModal').style.display = 'none';
     });
@@ -1013,63 +1067,49 @@
       }
     });
 
-    // Search input event listener
     document.getElementById('searchInput').addEventListener('input', filterServers);
 
-    // Initialize everything
-    createServerCards();
-    updateServerStatus();
-    setInterval(updateServerStatus, 300000);
-
-
-
-
-
-    // Add hamburger menu functionality
-    const hamburgerMenu = document.querySelector('.hamburger-menu');
-    const sideTab = document.querySelector('.side-tab');
+    document.getElementById('liked-servers-filter').addEventListener('click', () => {
+      const serverCards = document.querySelectorAll('.server-card');
+      serverCards.forEach(card => {
+        const serverId = card.dataset.serverId;
+        card.style.display = likedServers.includes(serverId) ? '' : 'none';
+      });
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
 
     hamburgerMenu.addEventListener('click', () => {
       hamburgerMenu.classList.toggle('active');
       sideTab.classList.toggle('open');
     });
 
-    // Close side tab when clicking outside
     document.addEventListener('click', (event) => {
-      if (!hamburgerMenu.contains(event.target) &&
-        !sideTab.contains(event.target)) {
+      if (!hamburgerMenu.contains(event.target) && !sideTab.contains(event.target)) {
         hamburgerMenu.classList.remove('active');
         sideTab.classList.remove('open');
       }
     });
 
-
-
-    // Home button scroll to top
-    const homeButton = document.querySelector('.side-tab-navigation h3');
-    homeButton.addEventListener('click', () => {
+    document.querySelector('.side-tab-navigation h3').addEventListener('click', () => {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
-      // Also close the side tab
       hamburgerMenu.classList.remove('active');
       sideTab.classList.remove('open');
     });
 
-    // Online Servers Filter
     document.getElementById('online-servers-filter').addEventListener('click', () => {
       const serverCards = document.querySelectorAll('.server-card');
       serverCards.forEach(card => {
         const statusIndicator = card.querySelector('.status-indicator');
         card.style.display = statusIndicator.classList.contains('status-online') ? '' : 'none';
       });
-      // Close side tab
       hamburgerMenu.classList.remove('active');
       sideTab.classList.remove('open');
     });
 
-    // PvP Servers Filter
     document.getElementById('pvp-servers-filter').addEventListener('click', () => {
       const pvpServers = ['pvplegacy', 'hypixel'];
       const serverCards = document.querySelectorAll('.server-card');
@@ -1080,7 +1120,11 @@
       hamburgerMenu.classList.remove('active');
       sideTab.classList.remove('open');
     });
-    // Update status every 5 minutes
+
+    // Initialize
+    createServerCards();
+    updateServerStatus();
+    setInterval(updateServerStatus, 300000);
   </script>
 
 
