@@ -547,10 +547,7 @@
     <div class="hamburger-line"></div>
   </div>
 
-
   <div class="side-tab">
-
-
     <div class="side-tab-navigation">
       <h3> Home </h3>
       <button id="online-servers-filter" class="side-tab-button">
@@ -558,6 +555,9 @@
       </button>
       <button id="pvp-servers-filter" class="side-tab-button">
         PvP Servers
+      </button>
+      <button id="survival-servers-filter" class="side-tab-button">
+        Survival Servers
       </button>
       <button id="liked-servers-filter" class="side-tab-button">
         <span id="like-icon">❤️</span> Liked Servers
@@ -1140,6 +1140,31 @@
       sideTab.classList.remove('open');
     });
 
+
+
+    document.getElementById('pvp-servers-filter').addEventListener('click', () => {
+      const pvpServers = ['pvplegacy', 'hypixel'];
+      const serverCards = document.querySelectorAll('.server-card');
+      serverCards.forEach(card => {
+        const serverId = card.dataset.serverId.toLowerCase();
+        card.style.display = pvpServers.includes(serverId) ? '' : 'none';
+      });
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+
+    // Add this new event listener
+    document.getElementById('survival-servers-filter').addEventListener('click', () => {
+      const survivalServers = ['lifesteal', 'donut', 'earthmc', 'mineberry'];
+      const serverCards = document.querySelectorAll('.server-card');
+      serverCards.forEach(card => {
+        const serverId = card.dataset.serverId.toLowerCase();
+        card.style.display = survivalServers.includes(serverId) ? '' : 'none';
+      });
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+    
     // Initialize
     createServerCards();
     updateServerStatus();
