@@ -6,6 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Minecraft Servers</title>
   <style>
+
+
+
+    .ip-container {
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+
+    .ip-label {
+      font-weight: 600;
+      margin-right: 0.5rem;
+      color: #b469ff;
+    }
+
+    .bedrock-ip {
+      background: rgba(88, 28, 135, 0.4);
+      margin-top: 0.5rem;
+    }
+
+    
     .server-card .like-button {
       position: absolute;
       top: 1rem;
@@ -553,6 +573,15 @@
       <button id="online-servers-filter" class="side-tab-button">
         Online Servers
       </button>
+
+      <button id="java-servers-filter" class="side-tab-button">
+        Java Servers
+      </button>
+      <button id="bedrock-servers-filter" class="side-tab-button">
+        Bedrock Servers
+      </button>
+
+      
       <button id="pvp-servers-filter" class="side-tab-button">
         PvP Servers
       </button>
@@ -623,16 +652,33 @@
 
   <script>
 
+
+
+    // Event Listeners
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const sideTab = document.querySelector('.side-tab');
+
+    document.getElementById('liked-servers-filter').addEventListener('click', () => {
+      const serverCards = document.querySelectorAll('.server-card');
+      serverCards.forEach(card => {
+        const serverId = card.dataset.serverId;
+        card.style.display = likedServers.includes(serverId) ? '' : 'none';
+      });
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+
     let likedServers = JSON.parse(localStorage.getItem('likedServers') || '[]');
 
     const servers = [
-
       {
-        id: 'lifesteal',
-        name: 'SMP Lifesteal',
-        description: "A unique SMP experience where players can steal each other's hearts!",
-        ip: 'lifesteal.net',
-        longDescription: "Experience Minecraft like never before in this heart-stealing survival multiplayer server. Each player starts with a limited number of hearts, and through combat, you can steal hearts from other players to become stronger. But be careful - if you lose all your hearts, you're banned until the next reset!",
+      id: 'lifesteal',
+      name: 'SMP Lifesteal',
+      description: "A unique SMP experience where players can steal each other's hearts!",
+      ip: 'lifesteal.net',
+      bedrockIp: 'bedrock.lifesteal.net',
+      port: '19132',
+      longDescription: "Experience Minecraft like never before in this heart-stealing survival multiplayer server. Each player starts with a limited number of hearts, and through combat, you can steal hearts from other players to become stronger. But be careful - if you lose all your hearts, you're banned until the next reset!",
         features: [
           "Heart stealing mechanics",
           "Weekly events and competitions",
@@ -650,15 +696,14 @@
           "Be respectful to other players",
           "No spawn camping",
           "No exploiting bugs"
-        ],
-
-
+        ]
       },
+    
 
       {
         id: 'donut',
         name: 'Donut SMP',
-        description: "Join a friendly survival multiplayer community where creativity and collaboration thrive!",
+        description: "Join a dangerous survival multiplayer server with cool features!",
         ip: 'play.donutsmp.net',
         longDescription: "Welcome to Donut SMP, a vibrant Minecraft community where players come together to build, explore, and create lasting friendships. Our server features a vanilla-plus experience with carefully selected plugins to enhance gameplay while maintaining the core survival experience. Whether you're a builder, adventurer, or redstone engineer, there's a place for everyone in our growing community!",
         features: [
@@ -681,12 +726,6 @@
           "No automated farming/AFK machines"
         ]
       },
-
-
-
-
-
-
       {
         id: 'hypixel',
         name: 'Hypixel',
@@ -713,9 +752,10 @@
           "No cross-teaming in competitive games",
           "No chat spam or harassment",
           "No boosting or stat manipulation"
-        ],
-
+        ]
       },
+      
+     
       {
         id: 'pvplegacy',
         name: 'PvP Legacy',
@@ -777,11 +817,13 @@
 
 
       {
-        id: 'earthmc',
-        name: 'Earth MC',
-        description: 'Experience geopolitical gameplay on a 1:1000 scale Earth map!',
-        ip: 'mp.earthmc.net',
-        longDescription: "EarthMC recreates Earth in Minecraft, allowing players to build towns, create nations, and engage in geopolitics. Join existing nations or start your own civilization, engage in trade, diplomacy, and warfare on a massive scale.",
+      id: 'earthmc',
+      name: 'Earth MC',
+      description: 'Experience geopolitical gameplay on a 1:1000 scale Earth map!',
+      ip: 'mp.earthmc.net',
+      bedrockIp: 'bedrock.earthmc.net',
+      port: '19132',
+      longDescription: "EarthMC recreates Earth in Minecraft, allowing players to build towns, create nations, and engage in geopolitics. Join existing nations or start your own civilization, engage in trade, diplomacy, and warfare on a massive scale.",
         features: [
           "Accurate Earth map recreation",
           "Nation and town system",
@@ -829,11 +871,13 @@
         ]
       },
       {
-        id: 'luxcube',
-        name: 'Luxcube',
-        description: 'Premium Minecraft experience with high-quality gameplay!',
-        ip: 'luxcube.net',
-        longDescription: "Luxcube delivers a premium Minecraft experience with carefully curated features and gameplay elements. The server focuses on providing high-quality content while maintaining a balanced and enjoyable environment for all players.",
+      id: 'luxcube',
+      name: 'Luxcube',
+      description: 'Premium Minecraft experience with high-quality gameplay!',
+      ip: 'luxcube.net',
+      bedrockIp: 'bedrock.luxcube.net',
+      port: '19132',
+      longDescription: "Luxcube delivers a premium Minecraft experience with carefully curated features and gameplay elements. The server focuses on providing high-quality content while maintaining a balanced and enjoyable environment for all players.",
         features: [
           "Premium gameplay features",
           "Regular updates",
@@ -857,11 +901,13 @@
 
 
       {
-        id: 'mccomplex',
-        name: 'MC Complex',
-        description: 'A diverse server network with something for everyone!',
-        ip: 'smc.mc-complex.com',
-        longDescription: "MC Complex is a comprehensive Minecraft network offering a wide range of gameplay experiences. Whether you're interested in survival, creative building, economy, or competitive gaming, we have servers tailored to your interests. Our network features multiple specialized servers, each with its own unique features and community, all connected through our global network.",
+      id: 'mccomplex',
+      name: 'MC Complex',
+      description: 'A diverse server network with something for everyone!',
+      ip: 'smc.mc-complex.com',
+      bedrockIp: 'play.mccomplex.com',
+      port: '19132',
+      longDescription: "MC Complex is a comprehensive Minecraft network offering a wide range of gameplay experiences. Whether you're interested in survival, creative building, economy, or competitive gaming, we have servers tailored to your interests. Our network features multiple specialized servers, each with its own unique features and community, all connected through our global network.",
         features: [
           "Multiple specialized servers",
           "Advanced economy system",
@@ -922,48 +968,63 @@
         const isLiked = likedServers.includes(server.id);
 
         card.innerHTML = `
-          <h2>
-            <span class="status-indicator ${server.status === 'online' ? 'status-online' : 'status-offline'}"></span>
-            ${server.name}
-          </h2>
-          <button class="like-button ${isLiked ? 'liked' : ''}" data-server-id="${server.id}">
-            ${isLiked ? '❤️' : '🤍'}
-          </button>
-          <p>${server.description}</p>
-          <div class="ip-container" data-ip="${server.ip}">
+        <h2>
+          <span class="status-indicator ${server.status === 'online' ? 'status-online' : 'status-offline'}"></span>
+          ${server.name}
+        </h2>
+        <button class="like-button ${isLiked ? 'liked' : ''}" data-server-id="${server.id}">
+          ${isLiked ? '❤️' : '🤍'}
+        </button>
+        <p>${server.description}</p>
+        <div class="player-count">
+          Players: ${server.currentPlayers || 0}/${server.maxPlayers || 10000}
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${((server.currentPlayers || 0) / (server.maxPlayers || 10000) * 100)}%"></div>
+          </div>
+        </div>
+        <div class="ip-container java-ip" data-ip="${server.ip}">
+            <span class="ip-label">Java:</span>
             <span class="ip-text">${server.ip}</span>
             <span class="copy-message">Copy</span>
           </div>
-          <div class="player-count">
-            Players: ${server.currentPlayers || 0}/${server.maxPlayers || 0}
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${((server.currentPlayers || 0) / (server.maxPlayers || 100) * 100)}%"></div>
+          ${server.bedrockIp ? `
+            <div class="ip-container bedrock-ip" data-ip="${server.bedrockIp}:${server.port}">
+              <span class="ip-label">Bedrock:</span>
+              <span class="ip-text">${server.bedrockIp}:${server.port}</span>
+              <span class="copy-message">Copy</span>
             </div>
-          </div>
+          ` : ''}
         `;
 
+        // Like button event listener
         const likeButton = card.querySelector('.like-button');
         likeButton.addEventListener('click', (e) => {
           e.stopPropagation();
           toggleLike(server.id);
         });
 
-        const ipContainer = card.querySelector('.ip-container');
-        ipContainer.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          const ip = e.currentTarget.dataset.ip;
-          const copyMessage = e.currentTarget.querySelector('.copy-message');
-          try {
-            await navigator.clipboard.writeText(ip);
-            copyMessage.classList.add('show');
-            ipContainer.classList.add('copied');
-            setTimeout(() => {
-              copyMessage.classList.remove('show');
-              ipContainer.classList.remove('copied');
-            }, 2000);
-          } catch (err) {
-            console.error('Failed to copy:', err);
-          }
+        // IP container click handlers for both Java and Bedrock IPs
+        const ipContainers = card.querySelectorAll('.ip-container');
+        ipContainers.forEach(container => {
+          container.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const ip = container.dataset.ip;
+            const copyMessage = container.querySelector('.copy-message');
+
+            try {
+              await navigator.clipboard.writeText(ip);
+              copyMessage.classList.add('show');
+              container.classList.add('copied');
+
+              // Remove the copied state after animation
+              setTimeout(() => {
+                copyMessage.classList.remove('show');
+                container.classList.remove('copied');
+              }, 2000);
+            } catch (err) {
+              console.error('Failed to copy:', err);
+            }
+          });
         });
 
         card.addEventListener('click', () => openModal(server));
@@ -972,7 +1033,6 @@
 
       updateLikedCount();
     }
-
     function openModal(server) {
       const modal = document.getElementById('serverModal');
       const modalBody = modal.querySelector('.modal-body');
@@ -1070,55 +1130,7 @@
         }
       }
     }
-
-    // Event Listeners
-    const hamburgerMenu = document.querySelector('.hamburger-menu');
-    const sideTab = document.querySelector('.side-tab');
-
-    document.querySelector('.close-button').addEventListener('click', () => {
-      document.getElementById('serverModal').style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-      const modal = document.getElementById('serverModal');
-      if (event.target === modal) {
-        modal.style.display = 'none';
-      }
-    });
-
-    document.getElementById('searchInput').addEventListener('input', filterServers);
-
-    document.getElementById('liked-servers-filter').addEventListener('click', () => {
-      const serverCards = document.querySelectorAll('.server-card');
-      serverCards.forEach(card => {
-        const serverId = card.dataset.serverId;
-        card.style.display = likedServers.includes(serverId) ? '' : 'none';
-      });
-      hamburgerMenu.classList.remove('active');
-      sideTab.classList.remove('open');
-    });
-
-    hamburgerMenu.addEventListener('click', () => {
-      hamburgerMenu.classList.toggle('active');
-      sideTab.classList.toggle('open');
-    });
-
-    document.addEventListener('click', (event) => {
-      if (!hamburgerMenu.contains(event.target) && !sideTab.contains(event.target)) {
-        hamburgerMenu.classList.remove('active');
-        sideTab.classList.remove('open');
-      }
-    });
-
-    document.querySelector('.side-tab-navigation h3').addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-      hamburgerMenu.classList.remove('active');
-      sideTab.classList.remove('open');
-    });
-
+    // Online servers filter
     document.getElementById('online-servers-filter').addEventListener('click', () => {
       const serverCards = document.querySelectorAll('.server-card');
       serverCards.forEach(card => {
@@ -1129,6 +1141,29 @@
       sideTab.classList.remove('open');
     });
 
+    // Java servers filter
+    document.getElementById('java-servers-filter').addEventListener('click', () => {
+      const serverCards = document.querySelectorAll('.server-card');
+      serverCards.forEach(card => {
+        const hasJavaIp = card.querySelector('.java-ip') !== null;
+        card.style.display = hasJavaIp ? '' : 'none';
+      });
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+
+    // Bedrock servers filter
+    document.getElementById('bedrock-servers-filter').addEventListener('click', () => {
+      const serverCards = document.querySelectorAll('.server-card');
+      serverCards.forEach(card => {
+        const hasBedrockIp = card.querySelector('.bedrock-ip') !== null;
+        card.style.display = hasBedrockIp ? '' : 'none';
+      });
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+
+    // PvP servers filter
     document.getElementById('pvp-servers-filter').addEventListener('click', () => {
       const pvpServers = ['pvplegacy', 'hypixel'];
       const serverCards = document.querySelectorAll('.server-card');
@@ -1140,20 +1175,7 @@
       sideTab.classList.remove('open');
     });
 
-
-
-    document.getElementById('pvp-servers-filter').addEventListener('click', () => {
-      const pvpServers = ['pvplegacy', 'hypixel'];
-      const serverCards = document.querySelectorAll('.server-card');
-      serverCards.forEach(card => {
-        const serverId = card.dataset.serverId.toLowerCase();
-        card.style.display = pvpServers.includes(serverId) ? '' : 'none';
-      });
-      hamburgerMenu.classList.remove('active');
-      sideTab.classList.remove('open');
-    });
-
-    // Add this new event listener
+    // Survival servers filter
     document.getElementById('survival-servers-filter').addEventListener('click', () => {
       const survivalServers = ['lifesteal', 'donut', 'earthmc', 'mineberry'];
       const serverCards = document.querySelectorAll('.server-card');
@@ -1164,7 +1186,7 @@
       hamburgerMenu.classList.remove('active');
       sideTab.classList.remove('open');
     });
-    
+   
     // Initialize
     createServerCards();
     updateServerStatus();
@@ -1286,6 +1308,42 @@
       hamburgerMenu.classList.remove('active');
       sideTab.classList.remove('open');
     });
+
+
+    document.querySelector('.close-button').addEventListener('click', () => {
+      document.getElementById('serverModal').style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      const modal = document.getElementById('serverModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', filterServers);
+
+    hamburgerMenu.addEventListener('click', () => {
+      hamburgerMenu.classList.toggle('active');
+      sideTab.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!hamburgerMenu.contains(event.target) && !sideTab.contains(event.target)) {
+        hamburgerMenu.classList.remove('active');
+        sideTab.classList.remove('open');
+      }
+    });
+
+    document.querySelector('.side-tab-navigation h3').addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      hamburgerMenu.classList.remove('active');
+      sideTab.classList.remove('open');
+    });
+
     
   </script>
 
